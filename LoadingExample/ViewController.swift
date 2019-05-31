@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SkeletonView
 
 struct Item {
     let title: String
@@ -32,8 +33,12 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        let gradient = SkeletonGradient(baseColor: .alizarin)
+        let animation = SkeletonAnimationBuilder().makeSlidingAnimation(withDirection: .leftRight)
+        view.showAnimatedGradientSkeleton(usingGradient: gradient, animation: animation)
         getSomething { [weak self] items in
             self?.items = items
+            self?.view.hideSkeleton()
         }
     }
     
@@ -67,7 +72,11 @@ class ViewController: UIViewController {
 
 // MARK: Date source
 
-extension ViewController: UITableViewDataSource {
+extension ViewController: SkeletonTableViewDataSource {
+    
+    func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
+        return "Cell"
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return items.count
